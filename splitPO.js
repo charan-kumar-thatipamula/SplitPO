@@ -10,8 +10,10 @@ function splitPO(poA) {
   this.poA = poA
   this.rType = 'purchaseorder'
   this.sublist = 'item'
-  var sslF = 'item' // 'custcol_ilt_ship_service_level'
+  var sslF = 'custcol_ilt_ship_service_level' // 'item'
   var that = this
+  var fieldsToWorkWith = ['item', 'custcol_vendor', 'quantity', 'rate', 'amount', 'createdpo', 'custcol_ilt_ship_service_level', 'custcol_ilt_is_drpsp_item', 'custcol_ilt_shipping_profile']
+
   function loadPO(poId) {
     console.log('that.rType: ' + that.rType)
     console.log('poId in loadPO: ' + poId)
@@ -73,6 +75,7 @@ function splitPO(poA) {
         createdPOs[that.getCurrentPOID() + '|' + ssl] = rId
       }
     }
+    return createdPOs
   }
 
   function generateRecord(r, lines) {
@@ -85,28 +88,31 @@ function splitPO(poA) {
       var line = lines[i]
       for (var fld in line) {
         if (line.hasOwnProperty(fld) && fieldsToSkip.indexOf(fld) === -1) {
-          r.setLineItemValue(that.sublist, i + 1, line[fld])
+          line[fld] = (fld === sslF || fld === that.sublist) ? parseInt(line[fld], 10) : line[fld]
+          r.setLineItemValue(that.sublist, fld, i + 1, line[fld])
         }
       } // end of 'fld' for loop
     } // end of 'lines' for loop
 
     var rId = nlapiSubmitRecord(r)
+    console.log('PO created: ' + rId)
     return rId
   }
 
   this.run = function (poId) {
     try {
+      poId = parseInt(poId, 10)
       this.setCurrentPOID(poId)
       console.log(poId)
       var lines = loadPO(poId)
       console.log('lines: ' + JSON.stringify(lines))
       var linesBasedOnSSL = combineBySSL(lines)
       console.log('linesBasedOnSSL: ' + JSON.stringify(linesBasedOnSSL))
-      // var newPOs = createPOBasedOnSSL(linesBasedOnSSL)
-      // console.log('newPOs: ' + JSON.stringify(newPOs))
-      // return newPOs
+      var newPOs = createPOBasedOnSSL(linesBasedOnSSL)
+      console.log('newPOs: ' + JSON.stringify(newPOs))
+      return newPOs
     } catch (e) {
-      console.log('Exception running: ' + e)
+      console.log('Exception running: ' + JSON.stringify(e))
     }
   }
 
@@ -131,7 +137,7 @@ splitPO.prototype.splitPOWrapper = function () {
 }
 
 // var r = new splitPO(44076760)
-var r = new splitPO(38049351)
+var r = new splitPO('44077204')
 r.splitPOWrapper()
 
 // var console = {
