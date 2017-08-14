@@ -11,20 +11,14 @@ var srType = 'salesorder'
 var sId = 'customsearch_ilt_so_search_po_split'
 var sublist = 'item'
 var poF = 'createdpo'
-// var fieldsToWorkWith = ['item', 'custcol_vendor', 'quantity', 'rate', 'amount', 'createdpo', 'custcol_ilt_ship_service_level', 'custcol_ilt_is_drpsp_item', 'custcol_ilt_shipping_profile']
-// var fieldsToSkip = []
 
 function run() {
   try {
     var qSO = getQualifiedSOs()
-    // console.log('qualified salesorders: ' + JSON.stringify(qSO))
     for (var i = 0; i < qSO.length; i++) {
       var poIds = getPOIds(qSO[i])
-      // console.log('poIds: ' + JSON.stringify(poIds))
-      // console.log('creating splitPO object')
       nlapiLogExecution('DEBUG', 'Start splitting Purchase orders for SO #: ' + qSO[i], 'POs: ' + JSON.stringify(poIds))
       var r = new splitPO(poIds)
-      // console.log('splitPO object created')
       var newPOs = r.splitPOWrapper()
       nlapiLogExecution('DEBUG', 'newPOs for order #' + qSO[i], JSON.stringify(newPOs))
     }
@@ -56,7 +50,6 @@ function getPOIds(soId) {
       continue
     }
     var poId = r.getLineItemValue(sublist, poF, i)
-    // console.log('poIds.indexOf(' + 'poId): ' + poIds.indexOf(poId))
     if (poId && poIds.indexOf(parseInt(poId, 10)) === -1) {
       poIds.push(parseInt(poId, 10))
     }
@@ -64,9 +57,3 @@ function getPOIds(soId) {
   nlapiLogExecution('AUDIT', 'Purchase orders on Sales order #: ' + soId, JSON.stringify(poIds))
   return poIds
 }
-
-// var console = {
-//   log: function (m1) {
-//     nlapiLogExecution('DEBUG', '', m1)
-//   }
-// }
