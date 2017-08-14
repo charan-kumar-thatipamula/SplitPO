@@ -11,8 +11,8 @@ var srType = 'salesorder'
 var sId = 'customsearch_ilt_so_search_po_split'
 var sublist = 'item'
 var poF = 'createdpo'
-var fieldsToWorkWith = ['item', 'custcol_vendor', 'quantity', 'rate', 'amount', 'createdpo', 'custcol_ilt_ship_service_level', 'custcol_ilt_is_drpsp_item', 'custcol_ilt_shipping_profile']
-var fieldsToSkip = []
+// var fieldsToWorkWith = ['item', 'custcol_vendor', 'quantity', 'rate', 'amount', 'createdpo', 'custcol_ilt_ship_service_level', 'custcol_ilt_is_drpsp_item', 'custcol_ilt_shipping_profile']
+// var fieldsToSkip = []
 
 function run() {
   try {
